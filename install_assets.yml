@@ -1,0 +1,38 @@
+---
+- hosts: all
+  tasks:
+
+  - name: Create folder
+    file:
+      path: /tmp/assents-agent
+      state: directory
+
+  - name: Copie assents-agent
+    ansible.builtin.copy:
+      src: /tmp/assents-agent.tar.gz
+      dest: /tmp
+      owner: root
+      group: root
+      mode: '0750'
+
+  - name: Unzip the package
+    ansible.builtin.unarchive:
+       src: /tmp/assents-agent.tar.gz
+       dest: /tmp/assents-agent
+       remote_src: yes
+
+#  - name: Run agent assents
+#    ansible.builtin.shell: cd /tmp/assents-agent && chmod -x /tmp/assents-agent/install.sh && sudo bash /tmp/assents-agent/install.sh --protocol http --host 192.168.70.22 --port 80
+
+  - name: Change of permission
+    ansible.builtin.file:
+      path: /tmp/assents-agent/install.sh
+      owner: root
+      group: root
+      mode: '0750'
+
+  - name: Execute script
+    ansible.builtin.command: ./install.sh
+    become: yes
+    args:
+      chdir: /tmp/assents-agent
