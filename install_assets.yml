@@ -32,7 +32,34 @@
       mode: '0750'
 
   - name: Execute script
-    ansible.builtin.command: ./install.sh
-    become: yes
+    command:
+      argv:
+        - ./install.sh
+        - --protocol
+        - http
+        - --host
+        - proxyinsight.ar.port.po
+        - --port
+        - 80
     args:
       chdir: /tmp/assents-agent
+    become: yes
+
+  - name: Delete Zip
+    ansible.builtin.file:
+      path: /tmp/assents-agent.tar.gz
+      state: absent
+    become: yes
+
+  - name: Delete Directory
+    ansible.builtin.file:
+      path: /tmp/assents-agent
+      state: absent
+    become: yes
+
+
+
+
+
+
+
