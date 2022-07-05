@@ -1,0 +1,28 @@
+---
+- name: disable users
+  hosts: all
+  gather_facts: no
+
+  tasks:
+  - name: Get all account info
+    raw: grep {{ dis_user }} /etc/passwd
+    register: user_exists
+    ignore_errors: true
+
+  - debug:
+      msg: "{{ dis_user }} va a ser lockeado"
+    when: user_exists is succeeded
+
+  - name: Lock user
+    raw: passwd -l {{ dis_user }}
+    become: yes
+    when: user_exists is succeeded
+
+  - name: change shell to nologin
+    raw: /usr/sbin/usermod --shell /sbin/nologin {{ dis_user }}
+    become: yes
+    when: user_exists is succeeded
+
+  - name: Eliminar directorios
+    raw: rm -rf /home/{{ dis_user }}/
+    become: yes

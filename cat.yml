@@ -1,0 +1,8 @@
+---
+- hosts: all
+
+  tasks:
+  - name: Run a command that uses non-posix shell-isms (in this example /bin/sh doesn't handle redirection and wildcards together but bash does)
+    raw: cat /etc/redhat-release
+    args:
+      executable: /bin/bash

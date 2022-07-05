@@ -1,0 +1,30 @@
+---
+- hosts: all
+  gather_facts: false
+  #vars:
+    #u_name: laboratorio
+    #u_pass: 'example'
+  tasks:
+  #- name: Verificar usuario
+    #raw: grep -q {{ u_name }} /etc/passwd
+    #register: user_exists
+    #ignore_errors: true
+
+  #- debug:
+      #msg: "El user {{ u_name }} ya EXISTE"
+    #when: user_exists is succeeded
+
+  - name: Agregar usuario RHEL5
+    raw: /usr/sbin/useradd {{ u_name }}
+    become: yes
+    register: user_exists
+    ignore_errors: true
+
+  - ansible.builtin.fail:
+      msg: "El user {{ u_name }} YA EXISTE"
+    when: user_exists.rc != 0
+
+  - name: Asignar password
+    raw: echo {{ u_pass }} | passwd --stdin {{ u_name }}
+    become: yes
+

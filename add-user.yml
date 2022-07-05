@@ -1,0 +1,15 @@
+- hosts: all
+  gather_facts: false
+  become: yes
+  vars:
+    u_contra: 'example'
+  tasks:
+    - name: create user
+      user:
+        name: "{{ u_name }}"
+        state: present
+        createhome: yes
+        password: "{{ u_contra |password_hash('sha512') }}"
+        groups: wheel
+        append: yes
+
